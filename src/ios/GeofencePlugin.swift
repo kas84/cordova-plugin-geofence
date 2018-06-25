@@ -155,11 +155,22 @@ func log(_ messages: [String]) {
         log("didReceiveLocalNotification")
         if UIApplication.shared.applicationState != UIApplicationState.active {
             var data = "undefined"
+            var localFireDate="undefined"
+            var allData="undefined"
             if let uiNotification = notification.object as? UILocalNotification {
                 if let notificationData = uiNotification.userInfo?["geofence.notification.data"] as? String {
                     data = notificationData
+                    let formatter = DateFormatter()
+                    // initially set the format based on your datepicker date / server String
+                    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+
+                    let myString = formatter.string(from: uiNotification.fireDate!) // string purpose I add here
+                    // convert your string to date
+
+                    localFireDate = myString
+                    allData="{\"notificationData\":"+data+",\"fireDate\":\""+localFireDate+"\"}"
                 }
-                let js = "setTimeout('geofence.onNotificationClicked(" + data + ")',0)"
+                let js = "setTimeout('geofence.onNotificationClicked(" + allData + ")',0)"
 
                 evaluateJs(js)
             }
